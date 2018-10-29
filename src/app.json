@@ -1,0 +1,49 @@
+{
+  "pages": [
+    "pages/index/main",
+    "pages/logs/main",
+    "pages/profile/main",
+    "pages/post/main",
+    "pages/itemsControl/main",
+    "pages/advice/main",
+    "pages/auth/main",
+    "pages/about/main"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#2489cd",
+    "navigationBarTitleText": "武院失物招领",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/index/main",
+        "text": "首页",
+        "iconPath": "./static/imgs/item_0.png",
+        "selectedIconPath": "./static/imgs/item_1.png"
+      },
+      {
+        "pagePath": "pages/post/main",
+        "text": "发布",
+        "iconPath": "./static/imgs/post_0.png",
+        "selectedIconPath": "./static/imgs/post_1.png"
+      },
+      {
+        "pagePath": "pages/profile/main",
+        "text": "我的",
+        "iconPath": "./static/imgs/me_0.png",
+        "selectedIconPath": "./static/imgs/me_1.png"
+      }
+    ],
+    "color": "black",
+    "selectedColor": "#2489cd",
+    "position": "bottom"
+  },
+  "plugins": {
+    "wxparserPlugin": {
+      "version": "0.1.0",
+      "provider": "wx9d4d4ffa781ff3ac"
+    }
+  }
+}

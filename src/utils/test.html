@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+
+    </body>
+<script>
+    // async function timeout() {
+    //     // console.log('in timeout')
+    //     // return 'hello world';
+    //     throw '- -'
+    // }
+    // timeout().catch(res => {console.log(res)})
+    //          .catch(res => {console.log(res)})
+    // console.log('虽然在后面, 但是我先执行')
+
+    // async function timeout(flag) {
+    //     if (flag) {
+    //         return 'hello world'
+    //     } else {
+    //         throw '- -'
+    //     }
+    // }
+    // console.log(timeout(true))
+    // console.log(timeout(false))
+
+    // function doubleAfter2seconds(num) {
+    //     return new Promise((resolve, reject) => {
+    //         setTimeout(() => {
+    //             resolve(2 * num)
+    //         }, 2000)
+    //     })
+    // }
+    //
+    // async function testResult() {
+    //     let result = await doubleAfter2seconds(30)
+    //     console.log(result)
+    // }
+
+    // testResult()
+
+    // let myFirstPromise = new Promise((resolve, reject) => {
+    //     setTimeout(() => {
+    //         resolve("成功!")
+    //         // reject('a')
+    //     }, 250)
+    // })
+    //
+    // myFirstPromise.then((res) => {
+    //     console.log(res)
+    // }).catch((res) => {
+    //     console.log(res)
+    // })
+    //
+    // function get () {
+    //     return new Promise((resolve, reject) => {
+    //         resolve('ans')
+    //     })
+    // }
+    //
+    // async function test () {
+    //     let res = await get()
+    //     console.log('res', res)
+    // }
+    //
+    // test()
+
+    function resolveAfter2Seconds(x) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(x)
+            }, 2000)
+        })
+    }
+
+    async function add1(x) {
+        let a = await resolveAfter2Seconds(20)
+        let b = await resolveAfter2Seconds(30)
+        return x + a + b
+    }
+
+    add1(10).then(v => {
+        console.log('1', v)
+    })
+
+    async function add2(x) {
+        let a = resolveAfter2Seconds(20)
+        let b = resolveAfter2Seconds(30)
+        return x + await a + await b
+    }
+
+    add2(10).then(v => {
+        console.log('2', v)
+    })
+
+</script>
+</html>
