@@ -30,7 +30,7 @@ export default {
             stu_pwd: '',
             height: 0,
             user_id: null,
-            post: 0
+            post: 0,
         }
     },
 
@@ -42,6 +42,7 @@ export default {
 
     methods: {
         async onSubmit () {
+            console.log('...........')
             let data = {
                 user_id: this.user_id,
                 stu_id: this.stu_id,
@@ -54,18 +55,22 @@ export default {
                 showSuccess('认证成功')
                 setTimeout(()=> {
                     wx.setStorageSync('auth', true)
-                    if (this.post === 0) {
-                        switchTab('/pages/profile/main')
+                    console.log('post', this.post)
+                    if (this.post === 2) {
+                        switchTab('/pages/index/main')
                     } else if (this.post === 1) {
                         switchTab('/pages/post/main')
+                    } else if (this.post === 0){
+                        switchTab('/pages/profile/main')
                     }
-                }, 1000)
+                }, 500)
             } else {
                 hideLoading()
             }
             console.log(res)
         }
     },
+
 
     onLoad() {
         wx.getSystemInfo({
@@ -83,8 +88,19 @@ export default {
     beforeMount () {
         this.user_id = Number(this.$root.$mp.query.id)
         this.post = Number(this.$root.$mp.query.post)
-        console.log('this.user_id', this.user_id)
+        if (this.post === 2) {
+            wx.showModal({
+                title: '说明',
+                content: '为保障武汉学院师生信息安全,请认证后使用',
+                confirmText: '确定',
+                confirmColor: '#2489cd',
+                showCancel: false,
+            })
+        }
+        console.log('this.user_id', this.user_id, this.post)
     }
+
+
 
 }
 </script>

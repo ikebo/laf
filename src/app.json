@@ -36,7 +36,7 @@
         "selectedIconPath": "./static/imgs/me_1.png"
       }
     ],
-    "color": "black",
+    "color": "#000000",
     "selectedColor": "#2489cd",
     "position": "bottom"
   },

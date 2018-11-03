@@ -9,6 +9,12 @@
         	<h3 class="title">更新日志</h3>
         	<div class="logo-control">
                 <p class="logo-detail">
+                    <span>v1.5.2</span>解决iphone底部导航文字不显示问题及异步加载数据不同步问题(2018-10-31)
+                </p>
+                <p class="logo-detail">
+                    <span>v1.5.0</span>为保护同学们的个人信息(如姓名班级手机号), 只有身份认证后才可进入(2018-10-29)
+                </p>
+                <p class="logo-detail">
                     <span>v1.4.7</span>修改了认证页面(2018-10-28)
                 </p>
                 <p class="logo-detail">

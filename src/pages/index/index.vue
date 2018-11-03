@@ -25,7 +25,7 @@
 
 <script>
 import Config from '@/utils/config'
-import {get,post,showLoading,hideLoading,showModal,showMsg} from '@/utils/util'
+import {get,post,wxLogin,redirect,navigate,showLoading,hideLoading,showModal,showMsg} from '@/utils/util'
 import Item from '@/components/Item'
 
 export default {
@@ -40,7 +40,8 @@ export default {
           padding_temp: 0,       // 存放padding值
           search_result: false,  // 搜索结果状态
           search_page: 0,         // 搜索结果分页
-          go_show: false
+          go_show: false,
+          user: null
       }
     },
 
@@ -150,7 +151,45 @@ export default {
         wx.showShareMenu({
             withShareTicket: false
         })
+        let got = wx.getStorageSync('got')
+        if (!got) {
+            let app = getApp()
+            app.userInfoReadyCallbackForIndex = res => {
+                this.user = res
+                console.log('userInfoReadyCallbackForIndex......')
+                // let auth = wx.getStorageSync('auth')
+                // console.log('index', this.user, auth)
+                // if (auth) {
+                //     console.log('fff')
+                //     redirect(`/pages/auth/main?id=${this.user.id}&post=2`)
+                // }
+            }    
+        } else {
+            this.user = wx.getStorageSync('userData')
+        }
     },
+
+    onLoad() {
+        console.log('index onload in')
+        // let got = wx.getStorageSync('got')
+        // if (got) {
+        //     let auth = wx.getStorageSync('auth')
+        //     let user = wx.getStorageSync('userData')
+        //     console.log('index', user, user_id)
+        //     if (!auth) {
+        //         console.log('fff')
+        //         redirect(`/pages/auth/main?id=${user.id}&post=2`)
+        //     }
+        // }
+        // let auth = wx.getStorageSync('auth')
+        // console.log('index', this.user, auth)
+        // if (!auth) {
+        //     console.log('fff')
+        //     redirect(`/pages/auth/main?id=${this.user.id}&post=2`)
+        // }
+        
+    },
+
 
     beforeMount () {
         wx.onNetworkStatusChange((r) => {

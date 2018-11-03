@@ -69,14 +69,6 @@ export default {
     },
 
     methods: {
-        async login() {
-            const code = await wxLogin()
-            const user = await get(`/api/v1/user/${code}`)
-            this.user = user
-            console.log('user',user)
-            wx.setStorageSync('userData', this.user)
-            console.log('用户数据缓存成功')
-        },
         onImgPreview (src) {
             wx.previewImage({
                 urls: [src]
@@ -84,6 +76,7 @@ export default {
         },
         async update_avatar () {
             // 将用户头像，用户名发送到服务器
+            console.log('update avatar ..........')
             let data = {
                 avatarUrl: this.userInfo.avatarUrl,
                 nickName: this.userInfo.nickName
@@ -118,16 +111,12 @@ export default {
             this.userInfo = infoOrFalse ? infoOrFalse : this.userInfo
             this.canUseInfo = Boolean(infoOrFalse) ? this.update_avatar() : false
             console.log('this.canUseInfo', this.canUseInfo)
+            if (!this.canUseInfo) {
+                showMsg('请先授权头像昵称')
+            }
         },
 
         onAboutClick () {
-            // wx.showModal({
-            //     title: '关于',
-            //     content: `"武院失物招领"是由武院信息中心网技团开发的公益项目,开源地址:"https://github.com/ikebo/small-laf",联系邮箱:"k_1043@126.com"`,
-            //     confirmText: 'OK',
-            //     confirmColor: '#2489cd',
-            //     showCancel: false
-            // })
             navigate(`/pages/about/main`)
         },
 
@@ -145,10 +134,15 @@ export default {
         wx.showShareMenu({
             withShareTicket: false
         })
-
-        this.auth = wx.getStorageSync('auth')
-        if(!(this.user = wx.getStorageSync('userData') || null)) {
-            this.login()
+        let got = wx.getStorageSync('got')
+        if (!got) {
+            let app = getApp()
+            app.userInfoReadyCallbackForProfile = res => {
+                this.user = res
+                console.log('userInfoReadyCallbackForProfile......')
+            }    
+        } else {
+            this.user = wx.getStorageSync('userData')
         }
         wx.getSystemInfo({
             success: res => {
@@ -156,19 +150,22 @@ export default {
                 this.height = res.windowHeight
             }
         })
+        // this.isAuth()
     },
 
     beforeMount (options) {
         // 获得全局数据：用户id
-        this.auth = wx.getStorageSync('auth')
-        const user = wx.getStorageSync('userData')
-        this.user = user
-        console.log('in profile, user', user)
+        // this.auth = wx.getStorageSync('auth')
+        // const user = wx.getStorageSync('userData')
+        // this.user =   user
+        // console.log('in profile, user', user)
+
         this.isAuth()
     },
 
     onShow() {
-        this.auth = wx.getStorageSync('auth')
+        this.auth = wx.getStorageSync('auth') || false
+        // this.auth = Number(this.user.qqNumber) ? true : false
         console.log('this.auth', this.auth)
     },
 
@@ -261,6 +258,18 @@ export default {
     align-items: center;
     justify-content: center;
 
+}
+
+.userInfo-left button {
+    width: 140rpx !important;
+    height: 140rpx !important;
+    border-radius: 50%;
+    border: 6rpx solid !important;
+    margin-bottom: .6em;
+}
+
+.userInfo-left button p {
+    font-size: 1.5em !important;
 }
 
 .userInfo-left img {

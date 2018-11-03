@@ -44,7 +44,7 @@ export function hasInfoAuth() {
                     });
                 } else {
                     console.log('未授权');
-                    showMsg('请先授权基本信息')
+                    // showMsg('请先授权基本信息')
                     // resolve reject  疑惑
                     resolve(false)
                 }
@@ -120,6 +120,21 @@ export function wxLogin () {
     })
 }
 
+export function wxLoginSync () {
+    let result = null
+    wx.login({
+        success: (res) => {
+            if (res.code) {
+                result =  res.code
+            } else {
+                showModal('失败','获取code失败')
+                result = false
+            }
+        }
+    })
+    return result
+}
+
 export function uploadImg(tmp_src) {
     // 将图片上传到服务器
     return new Promise((resolve, reject) => {
@@ -144,12 +159,24 @@ export function get (url, data) {
     return request(url, 'GET', data)
 }
 
+export function getSync (url, data) {
+    return requestSync(url, 'GET', data)
+}
+
 export function post (url, data) {
     return request(url, 'POST', data)
 }
 
+export function postSync (url, data) {
+    return requestSync(url, 'POST', data)
+}
+
 export function del (url, data) {
     return request(url, 'DELETE', data)
+}
+
+export function delSync (url, data) {
+    return requestSync(url, 'DELETE', data)
 }
 
 function request (url, method, data, header = {}) {
@@ -183,6 +210,39 @@ function request (url, method, data, header = {}) {
             }
         })
     })
+}
+
+function requestSync (url, method, data, header = {}) {
+    let result = null
+    wx.request({
+        data,
+        method,
+        header,
+        url: Config['service'] + url,
+        success: function (res) {
+            console.log('res', res)
+            if (res.data.code === 1) {
+                result =  res.data.data === null ? true : res.data.data
+            } else {
+                console.log('post fail', res.data)
+                showModal('失败', res.data.msg || '服务器异常')
+                result = false
+            }
+        },
+        fail: function (res) {
+            wx.getNetworkType({
+                success: (r) => {
+                    if (r.networkType == "none") {
+                        showModal('失败','网络异常')
+                    } else {
+                        showModal('失败', '服务器异常')
+                    }
+                }
+            })
+            result = false
+        }
+    })
+    return result
 }
 
 export function delConfirm () {

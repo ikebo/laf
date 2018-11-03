@@ -51,11 +51,12 @@
 
 <script>
 import Config from '@/utils/config'
-import {getSrcs,uploadImg,post,switchTab,showModal,showMsg} from '@/utils/util'
+import {get, wxLogin, getSrcs,uploadImg,post,switchTab,showModal,showMsg} from '@/utils/util'
 import {checkTel,navigate,showLoading,hideLoading,showSuccess} from '@/utils/util'
 
 export default {
     data: {
+        auth: false,
         user: null,
         got_type: false,
         type: null,
@@ -86,9 +87,18 @@ export default {
         wx.showShareMenu({
             withShareTicket: false
         })
-
-        if(!(this.user = wx.getStorageSync('userData') || null)) {
-            this.login()
+        let got = wx.getStorageSync('got')
+        if (!got) {
+            let app = getApp()
+            console.log('app', app)
+            app.userInfoReadyCallback = res => {
+                this.user = res
+                this.auth = Number(this.user.qqNumber) ? true : false
+                console.log('userInfoReadyCallback......')
+            }
+        } else {
+            this.user = wx.getStorageSync('userData')
+            this.auth = wx.getStorageSync('auth')
         }
         wx.getSystemInfo({
             success: res => {
@@ -104,6 +114,30 @@ export default {
     },
 
     methods: {
+        isAuth (type) {
+            wx.getStorage({
+                key: 'auth',
+                success: res => {
+                    if (!res.data) {
+                        console.log('')
+                        wx.showModal({
+                            title: '提示',
+                            content: '首次发布需要验证身份,请前往个人页面完成身份认证',
+                            confirmText: '立即认证',
+                            confirmColor: '#2489cd',
+                            success: res => {
+                                if (res.confirm) {
+                                    navigate(`/pages/auth/main?id=${this.user.id}&post=1`)
+                                }
+                            }
+                        })
+                    } else {
+                        this.got_type = true
+                        this.type = type
+                    }
+                }
+            })
+        },
         onLocaTouchStart () {
             console.log('touch start')
             this.touch_start = true
@@ -146,15 +180,6 @@ export default {
             })
         },
 
-        async login() {
-            const code = await wxLogin()
-            const user = await get(`/api/v1/user/${code}`)
-            this.user = user
-            console.log('user',user)
-            wx.setStorageSync('userData', this.user)
-            console.log('用户数据缓存成功')
-        },
-
         async uploadImgs() {
             console.log('in uploadImgs')
             this.imgs.forEach(async (img) => {
@@ -172,48 +197,12 @@ export default {
 
         onLostClick () {
             console.log('lost click')
-            let auth = wx.getStorageSync('auth')
-            console.log('lost auth', auth)
-            if (!auth) {
-                console.log('')
-                wx.showModal({
-                    title: '提示',
-                    content: '首次发布需要验证身份,请前往个人页面完成身份认证',
-                    confirmText: '立即认证',
-                    confirmColor: '#2489cd',
-                    success: res => {
-                        if (res.confirm) {
-                            navigate(`/pages/auth/main?id=${this.user.id}&post=1`)
-                        }
-                    }
-                })
-            } else {
-                this.got_type = true
-                this.type = 0
-            }
+            this.isAuth(0)
         },
 
         onFoundClick () {
             console.log('found click')
-            let auth = wx.getStorageSync('auth')
-            console.log('found auth', auth)
-            if (!auth) {
-                console.log('not auth')
-                wx.showModal({
-                    title: '提示',
-                    content: '首次发布需要验证身份,请前往个人页面完成身份认证',
-                    confirmText: '立即认证',
-                    confirmColor: '#2489cd',
-                    success: res => {
-                        if (res.confirm) {
-                            navigate(`/pages/auth/main?id=${this.user.id}&post=1`)
-                        }
-                    }
-                })
-            } else {
-                this.got_type = true
-                this.type = 1
-            }
+            this.isAuth(1)
         },
 
         chooseImg () {
