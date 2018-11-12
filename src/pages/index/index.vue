@@ -192,6 +192,13 @@ export default {
 
 
     beforeMount () {
+        if(this.user !== null) {
+            let auth = wx.getStorageSync('auth')
+            if (!auth) {
+                console.log('index auth..........')
+                redirect(`/pages/auth/main?id=${this.user.id}&post=2`)
+            }
+        }
         wx.onNetworkStatusChange((r) => {
             if (!r.isConnected) {
                 showMsg('网络未连接')
