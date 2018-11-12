@@ -9,6 +9,9 @@
         	<h3 class="title">更新日志</h3>
         	<div class="logo-control">
                 <p class="logo-detail">
+                    <span>v1.5.4</span>解决了部分机型认证跳转和地理位置授权拒绝后无法再授权等问题(2018-11-12)
+                </p>
+                <p class="logo-detail">
                     <span>v1.5.2</span>解决iphone底部导航文字不显示问题及异步加载数据不同步问题(2018-10-31)
                 </p>
                 <p class="logo-detail">

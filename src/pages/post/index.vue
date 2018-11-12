@@ -27,8 +27,15 @@
                     <span class="iconfont add-icon">&#xe692;</span>
                 </div>
             </div>
+            
+            <div class="loca" v-if="auth_location === true" :style="{backgroundColor: touch_start ? '#f8f8f8' : '#fff'}" @touchstart="onLocaTouchStart" @touchend="onLocaTouchEnd">
+                <span class="iconfont loca-icon" :style="{marginRight: '8rpx'}">&#xe623;</span>
+               <!--  <input v-model='place' placeholder="地址" style='display: inline-block;' > -->
+                <p>{{ place ? place : '地址' }}</p>
+                <span class="iconfont loca-arrow">&#xe65b;</span>
+            </div>
 
-            <div class="loca" :style="{backgroundColor: touch_start ? '#f8f8f8' : '#fff'}" @touchstart="onLocaTouchStart" @touchend="onLocaTouchEnd">
+            <div class="loca" v-if="auth_location === false" :style="{backgroundColor: touch_start ? '#f8f8f8' : '#fff'}" @click="onOpenSetting" @touchstart="onLocaTouchStart" @touchend="onxLocaTouchEnd">
                 <span class="iconfont loca-icon" :style="{marginRight: '8rpx'}">&#xe623;</span>
                <!--  <input v-model='place' placeholder="地址" style='display: inline-block;' > -->
                 <p>{{ place ? place : '地址' }}</p>
@@ -68,7 +75,8 @@ export default {
         srcs: [],
         service: Config['static_service'],
         height: 0,
-        touch_start: false
+        touch_start: false,
+        auth_location: false
     },
     // 处理选择图片触发onHide问题
     onHide () {
@@ -106,6 +114,18 @@ export default {
                 this.height = res.windowHeight
             }
         })
+        wx.getSetting({
+            success: res => {
+                let judge = res.authSetting["scope.userLocation"]
+                console.log(res.authSetting["scope.userLocation"] === undefined)
+                console.log('authSetting...', res.authSetting)
+                if (judge === undefined || judge === true) {
+                    this.auth_location = true
+                } else if (judge === false) {
+                    this.auth_location = false
+                }
+            }
+        })
     },
 
     beforeMount (options) {
@@ -141,10 +161,27 @@ export default {
         onLocaTouchStart () {
             console.log('touch start')
             this.touch_start = true
+            // wx.authorize({
+            //     scope: 'scope.userLocation'
+            // })
+        },
+        onxLocaTouchEnd() {
+            this.touch_start = false
         },
         onLocaTouchEnd () {
             this.touch_start = false
             this.onChooseLocation()
+        },
+        onOpenSetting () {
+            this.isChoosing = true
+            wx.openSetting({
+                success: res =>{
+                    console.log(res.authSetting)
+                    if (res.authSetting["scope.userLocation"] === true) {
+                        this.auth_location = true
+                    }
+                }
+            })
         },
         onChooseLocation () {
             this.isChoosing = true
@@ -152,6 +189,10 @@ export default {
                 success: (res) => {
                     console.log('name', res.name)
                     this.place = res.name
+                },
+                fail: res => {
+                    console.log('choose location fail..')
+                    this.auth_location = false
                 }
             })    
         },
